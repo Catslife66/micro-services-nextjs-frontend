@@ -3,7 +3,6 @@
 import { useState } from "react";
 import axios from "axios";
 import Link from "next/link";
-import { useAuth } from "@/lib/hooks/authProvider";
 import { passwordValidator } from "@/lib/utils/validators";
 import { useRouter } from "next/navigation";
 

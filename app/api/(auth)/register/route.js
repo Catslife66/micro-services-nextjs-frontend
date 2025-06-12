@@ -10,11 +10,9 @@ const BACKENDAPI_REGISTER_URL = `${URL_PREFIX}/users/register`;
 export async function POST(request) {
   try {
     const requestData = await request.json();
-    console.log(requestData);
     const res = await axios.post(BACKENDAPI_REGISTER_URL, requestData);
-    return NextResponse.json({ user: res.data }, { status: res.status });
+    return NextResponse.json({ user: res.data }, { status: res.status || 201 });
   } catch (e) {
-    console.log(e.response);
     return NextResponse.json(
       {
         error:

@@ -1,9 +1,4 @@
-import {
-  getAccessToken,
-  getRefreshToken,
-  setAccessToken,
-  setRefreshToken,
-} from "@/lib/authService";
+import { setAccessToken, setRefreshToken } from "@/lib/authService";
 import axios from "axios";
 import { NextResponse } from "next/server";
 
@@ -20,7 +15,7 @@ export async function POST(request) {
     const { refresh, access, user } = res.data;
     await setAccessToken(access);
     await setRefreshToken(refresh);
-    return NextResponse.json({ user: user }, { status: 200 });
+    return NextResponse.json({ user: user }, { status: res.status || 200 });
   } catch (e) {
     return NextResponse.json(
       { error: e.response?.data?.detail },

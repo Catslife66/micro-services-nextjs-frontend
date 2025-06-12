@@ -8,7 +8,7 @@ export default function Home() {
   const auth = useAuth();
 
   useEffect(() => {
-    if (auth.isAuthenticated) {
+    if (auth.isLoggedIn) {
       setIsLoggedIn(true);
     } else {
       setIsLoggedIn(false);

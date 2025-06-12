@@ -1,5 +1,5 @@
 import axios from "axios";
-import { getRefreshToken } from "@/lib/authService";
+import { deleteTokens, getRefreshToken } from "@/lib/authService";
 import { NextResponse } from "next/server";
 
 export async function POST(request) {
@@ -21,6 +21,7 @@ export async function POST(request) {
       return NextResponse.json({ isLoggedIn: true }, { status: res.status });
     } catch (e) {
       console.error("Error fetching session:", e);
+      await deleteTokens();
       return NextResponse.json(
         { isLoggedIn: false },
         { status: e.response?.status || 400 }

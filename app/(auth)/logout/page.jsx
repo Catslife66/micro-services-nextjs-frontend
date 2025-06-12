@@ -21,7 +21,9 @@ export default function page() {
   };
   return (
     <div>
-      <button onClick={handleLogout}>Logout</button>
+      <button className="cursor-pointer" onClick={handleLogout}>
+        Logout
+      </button>
     </div>
   );
 }

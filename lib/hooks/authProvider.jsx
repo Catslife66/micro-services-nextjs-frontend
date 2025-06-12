@@ -15,7 +15,7 @@ const LOGIN_REQUIRED_URL = "/login";
 const LOGIN_REDIRECT_URL = "/";
 
 export default function AuthProvider({ children }) {
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [user, setUser] = useState({
     email: "",
     username: "",
@@ -27,7 +27,8 @@ export default function AuthProvider({ children }) {
     localStorage.setItem(USER_STATUS_KEY, "1");
     localStorage.setItem(USER_NAME_KEY, username);
     localStorage.setItem(USER_EMAIL_KEY, email);
-
+    setUser({ email: email, username: username });
+    setIsLoggedIn(true);
     const nextUrl = searchParam.get("next");
     const invalidNextUrl = ["/login", "/logout"];
     const validNextUrl =
@@ -45,47 +46,34 @@ export default function AuthProvider({ children }) {
     localStorage.removeItem(USER_STATUS_KEY);
     localStorage.removeItem(USER_NAME_KEY);
     localStorage.removeItem(USER_EMAIL_KEY);
+    setUser({ email: "", username: "" });
+    setIsLoggedIn(false);
     router.replace(LOGIN_REQUIRED_URL);
   };
 
   useEffect(() => {
     const checkAuthStatus = async () => {
       try {
-        await axios.post("/api/verify");
-        setIsAuthenticated(true);
+        await axios.get("/api/session");
+        setIsLoggedIn(true);
+        const userState = localStorage.getItem(USER_STATUS_KEY);
+        if (userState == 1) {
+          const userEmail = localStorage.getItem(USER_EMAIL_KEY);
+          const userName = localStorage.getItem(USER_NAME_KEY);
+          setUser({ email: userEmail, username: userName });
+        }
       } catch (e) {
-        setIsAuthenticated(false);
+        console.log(e);
+        setIsLoggedIn(false);
       }
     };
 
     checkAuthStatus();
-
-    const userState = localStorage.getItem(USER_STATUS_KEY);
-    if (userState == 1) {
-      const userEmail = localStorage.getItem(USER_EMAIL_KEY);
-      const userName = localStorage.getItem(USER_NAME_KEY);
-      setUser({ email: userEmail, username: userName });
-    }
   }, []);
 
   return (
-    <AuthContext.Provider value={{ isAuthenticated, user, login, logout }}>
+    <AuthContext.Provider value={{ isLoggedIn, user, login, logout }}>
       {children}
     </AuthContext.Provider>
   );
 }
-
-// const checkAuth = async () => {
-//   try {
-//     const data = await getAuthStatus();
-//     if (data !== null) {
-//       setIsAuthenticated(true);
-//     } else {
-//       setIsAuthenticated(false);
-//     }
-//     console.log(data);
-//   } catch (error) {
-//     setIsAuthenticated(false);
-//     console.error("Authentication check failed:", error);
-//   }
-// };
